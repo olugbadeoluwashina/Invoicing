@@ -1,0 +1,26 @@
+{
+   "tasks": {
+      "dev": "deno run --watch --allow-net --allow-env --allow-read --allow-write --env-file main.ts",
+      "start": "deno run --allow-net --allow-env --allow-read --allow-write main.ts",
+      "migrate": "deno run --allow-net --allow-env src/db/migrate.ts",
+      "test": "deno test --allow-net --allow-env --allow-read"
+   },
+   "imports": {
+      "@app/shared/": "./src/shared/",
+      "@app/middleware/": "./src/middlewares/",
+
+      "@oak/oak": "jsr:@oak/oak@^17.2.0",
+      "kysely": "npm:kysely@^0.27",
+      "pg": "npm:pg@^8",
+      "bcrypt": "jsr:@felix/bcrypt@^1",
+      "jose": "npm:jose@^5",
+      "pdf-lib": "npm:pdf-lib@^1",
+      "zod": "npm:zod@^3"
+   },
+   "fmt": {
+      "useTabs": false,
+      "lineWidth": 100,
+      "indentWidth": 3,
+      "singleQuote": true
+   }
+}
