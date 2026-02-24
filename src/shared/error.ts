@@ -1,8 +1,19 @@
 class AppError extends Error {
-   constructor(message: string) {
-      super(message);
-      this.name = 'AppError';
-   }
+  
+  constructor(message: string, private status: number, private errorType: string) {
+    super(message);
+    this.name = 'AppError';
+    this.message = message;
+    this.status = status;
+    this.errorType = errorType;
+  }
 }
 
-export { AppError }
+class ValidationError extends AppError {
+  constructor(message: string) {  // just a string — no Zod awareness
+    super(message, 422, "VALIDATION_ERROR");
+  }
+}
+
+export { 
+    AppError, ValidationError };

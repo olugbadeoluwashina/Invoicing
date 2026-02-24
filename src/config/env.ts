@@ -1,9 +1,9 @@
 interface AppEnv {
-   PORT: number;
+  PORT: number;
 }
 
 export function loadEnv(): AppEnv {
-   return {
-      PORT: parseInt(Deno.env.get('PORT') ?? '3000'),
-   };
+  return {
+    PORT: parseInt(Deno.env.get('PORT') ?? '3000'),
+  };
 }

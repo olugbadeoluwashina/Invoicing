@@ -1,26 +1,31 @@
 {
-   "tasks": {
-      "dev": "deno run --watch --allow-net --allow-env --allow-read --allow-write --env-file main.ts",
-      "start": "deno run --allow-net --allow-env --allow-read --allow-write main.ts",
-      "migrate": "deno run --allow-net --allow-env src/db/migrate.ts",
-      "test": "deno test --allow-net --allow-env --allow-read"
-   },
-   "imports": {
-      "@app/shared/": "./src/shared/",
-      "@app/middleware/": "./src/middlewares/",
+  "tasks": {
+    "dev": "deno run --watch --allow-net --allow-env --allow-read --allow-write --env-file main.ts",
+    "start": "deno run --allow-net --allow-env --allow-read --allow-write main.ts",
+    "migrate": "deno run --allow-net --allow-env src/db/migrate.ts",
+    "test": "deno test --allow-net --allow-env --allow-read"
+  },
+  "imports": {
+    "@app/shared/": "./src/shared/",
+    "@app/infra/": "./src/infra/",
+    "@app/logic/": "./src/core/logic/",
+    "@app/core/": "./src/core/",
 
-      "@oak/oak": "jsr:@oak/oak@^17.2.0",
-      "kysely": "npm:kysely@^0.27",
-      "pg": "npm:pg@^8",
-      "bcrypt": "jsr:@felix/bcrypt@^1",
-      "jose": "npm:jose@^5",
-      "pdf-lib": "npm:pdf-lib@^1",
-      "zod": "npm:zod@^3"
-   },
-   "fmt": {
-      "useTabs": false,
-      "lineWidth": 100,
-      "indentWidth": 3,
-      "singleQuote": true
-   }
+    "@oak/oak": "jsr:@oak/oak@^17.2.0",
+    "@std/expect": "jsr:@std/expect@^1.0.18",
+    "@std/assert": "jsr:@std/assert",
+    "bcrypt": "jsr:@felix/bcrypt@^1",
+    "jose": "npm:jose@^5",
+    "pdf-lib": "npm:pdf-lib@^1",
+    "kysely": "npm:kysely@^0.28.10",
+    "pg": "npm:pg@^8.17.1",
+    "pg-pool": "npm:pg-pool@^3.11.0",
+    "zod": "npm:zod@^4.3.5"
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "singleQuote": true
+  }
 }
