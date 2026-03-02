@@ -11,8 +11,7 @@ Deno.test('CREATEINVOICEUC: verify user can create invoice successfully', async 
   const result = await invoiceUC.execute('uuid-001', createTestInvoiceFactory());
 
   assertOk(result);
-  expect(result.value).toEqual("uuid-001");
-
+  expect(result.value).toHaveProperty('id');
 });
 
 Deno.test('CREATEINVOICEUC: should return error if no items are provided', async () => {

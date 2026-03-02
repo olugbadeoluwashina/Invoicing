@@ -84,7 +84,11 @@ export class CreateInvoiceUC {
       //publicToken: invoice.publicToken,
      // publicUrl: invoice.publicUrl,
       createdAt: invoice.createdAt,
-      items: totalInItems.map(item => item),
+      items: totalInItems.map(item => {
+        item.unitPrice = toNaira(item.unitPrice);
+        item.total = toNaira(item.total);
+        return item;
+      }),
     });
   }
 
