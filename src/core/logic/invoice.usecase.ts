@@ -1,9 +1,12 @@
 import { fail, ok, Result } from '@app/shared/result.ts';
-import { toKobo } from '@app/shared/money.ts';
-import { CreateInvoiceInput, InvoiceResult } from '@app/core/schema/invoice.types.ts';
+import { toKobo, toNaira } from '@app/shared/money.ts';
+import { CreateInvoiceInput, InvoiceDto, InvoiceResult } from '@app/core/schema/invoice.types.ts';
 import { IInvoiceRepository } from '@app/core/logic/invoice.repository.ts';
 
+const INVOICE_PREFIX = "PAYT";
+
 export class CreateInvoiceUC {
+  
   constructor(private repo: IInvoiceRepository) {}
 
   async execute(userId: string, input: CreateInvoiceInput): Promise<Result<InvoiceResult>>  {
@@ -29,8 +32,8 @@ export class CreateInvoiceUC {
       return fail({ code: "VALIDATION_ERROR", message: "Invalid due date. Use YYYY-MM-DD format" });
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+
     if (dueDate < today) {
       return fail({ code: "VALIDATION_ERROR", message: "Due date cannot be in the past" });
     }
@@ -48,10 +51,14 @@ export class CreateInvoiceUC {
     const discount = toKobo(input.discount ?? 0);
     const total = subtotal + vatAmount - discount;
 
-    const result = await this.repo.create({
+    //invoice number generation logic
+    const sequence = await this.repo.incrementAndGetSequence(userId, new Date().getFullYear());
+    const invoiceNumber = this.formatInvoiceNumber(new Date().getFullYear(), sequence);
+
+    const invoice: InvoiceDto = await this.repo.create({
       userId,
       clientId: input.clientId,
-      invoiceNumber: `INV-${Date.now()}`, // Simple unique number generator for demo
+      invoiceNumber,
       dueDate: input.dueDate,
       subtotal, // Convert back to Naira for storage
       vatAmount, // 7.5% VAT
@@ -63,6 +70,26 @@ export class CreateInvoiceUC {
       items: totalInItems.map(item => item),
     })
     
-    return ok(result);
+    // RETURN RESULT ─────────────────────────────────────────────
+    return ok({
+      id: invoice.id,
+      invoiceNumber,
+      dueDate: input.dueDate,
+      subtotal: toNaira(subtotal), // Convert back to Naira for output
+      vatAmount: toNaira(vatAmount), // Convert back to Naira for output
+      discount: toNaira(discount), // Convert back to Naira for output
+      total: toNaira(total), // Convert back to Naira for output
+      notes: input.notes ?? null,
+      status: input?.status || 'draft' as const,
+      //publicToken: invoice.publicToken,
+     // publicUrl: invoice.publicUrl,
+      createdAt: invoice.createdAt,
+      items: totalInItems.map(item => item),
+    });
+  }
+
+  private formatInvoiceNumber(year: number, sequence: number): string {
+    const padded = String(sequence).padStart(3, "0");
+    return `${INVOICE_PREFIX}-${year}-${padded}`;
   }
 }

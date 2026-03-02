@@ -32,4 +32,5 @@ export const CreateInvoiceInputSchema = z.object({
   notes: z.string().optional(),
   discount: z.number().min(0).optional(),
   applyVat: z.boolean().optional(),
+  status: InvoiceStatusSchema.optional(),
 });

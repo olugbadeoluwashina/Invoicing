@@ -1,5 +1,6 @@
-import { CreateInvoiceRecord, InvoiceResult } from '../schema/invoice.types.ts';
+import { CreateInvoiceRecord, InvoiceDto } from '../schema/invoice.types.ts';
 
 export interface IInvoiceRepository {
-  create(data: CreateInvoiceRecord): Promise<InvoiceResult>;
+  create(data: CreateInvoiceRecord): Promise<InvoiceDto>;
+  incrementAndGetSequence(userId: string, year: number): Promise<number>;
 }

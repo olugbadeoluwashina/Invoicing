@@ -3,10 +3,7 @@ import { z } from "zod";
 import { Result, fail, ok } from './result.ts';
 import { ValidationError } from './error.ts';
 
-export async function validate<T>(
-  ctx: Context,
-  schema: z.ZodType<T>, // z.ZodType replaces ZodSchema in Zod v4
-): Promise<Result<T>> {
+export async function validate<T>(ctx: Context, schema: z.ZodType<T>): Promise<Result<T>> {
   const body = await ctx.request.body.json();
   const result = schema.safeParse(body);
 

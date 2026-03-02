@@ -9,27 +9,32 @@ export type InvoiceStatus = z.infer<typeof InvoiceStatusSchema>;
 export type CreateInvoiceInput = z.infer<typeof CreateInvoiceInputSchema>;
 
 export type InvoiceLineItemResult = {
-  id?: string;
   description: string;
   quantity: number;
   unitPrice: number; // Naira
   total?: number; // Naira
 };
 
+export type InvoiceClient = {
+  id: string;
+  name: string;
+  email: string;
+};
 
 export type InvoiceResult = {
   id: string;
   invoiceNumber: string;
   status: InvoiceStatus;
-  clientId: string;
+  // client: IvoiceClient;
   dueDate: string;
   subtotal: number; // Naira
   vatAmount: number; // Naira
   discount: number; // Naira
   total: number; // Naira
   notes: string | null;
-  publicToken: string;
+ // publicToken: string;
   items: InvoiceLineItemResult[];
+ // publicUrl: string;
   createdAt: Date;
 };
 
@@ -48,6 +53,15 @@ export type CreateInvoiceRecord = {
   items: {
     description: string;
     quantity: number;
-    unitPrice: number; // Naira
+    unitPrice: number;
+    total: number;// Naira
   }[];
 };
+
+export type InvoiceDto = {
+  id: string;
+  //client: InvoiceClient;  // requires a DB JOIN — only repo can provide this
+  //publicUrl: string;      // requires appUrl — only infra knows this
+  createdAt: Date;
+};
+

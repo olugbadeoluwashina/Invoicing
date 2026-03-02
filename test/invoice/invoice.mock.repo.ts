@@ -1,13 +1,20 @@
-import { CreateInvoiceInput, CreateInvoiceRecord, InvoiceResult } from '@app/core/schema/invoice.types.ts';
+import { CreateInvoiceInput, CreateInvoiceRecord, InvoiceDto } from '@app/core/schema/invoice.types.ts';
 import { IInvoiceRepository } from '@app/logic/invoice.repository.ts';
-import { de } from 'zod/v4/locales';
 
 class MockInvoiceRepo implements IInvoiceRepository {
   private invoices: CreateInvoiceRecord[] = [];
 
-  create(data: CreateInvoiceRecord): Promise<InvoiceResult> {
+  sequenceStore: Record<string, number> = {}; // { "userId-year": lastSequence }
+
+  create(data: CreateInvoiceRecord): Promise<InvoiceDto> {
     this.invoices.push(data);
      return Promise.resolve(createTestInvoiceFactory(data))
+  }
+
+  incrementAndGetSequence(userId: string, year: number): Promise<number> {
+    const key = `${userId}-${year}`;
+    this.sequenceStore[key] = (this.sequenceStore[key] || 0) + 1;
+    return Promise.resolve(this.sequenceStore[key]);
   }
 }
 
@@ -23,10 +30,9 @@ export function createTestInvoiceFactory(overrides?: Partial<CreateInvoiceInput>
 
     return {
         id: "invoice-uuid-001",
-        userId: "user-uuid-001",
+        clientId: "uuid-001",
         invoiceNumber: "INV-2026-001",
         status: "draft" as const,
-        clientId: "client-uuid-001",
         dueDate: tomorrow,
         subtotal: 150000,   // ₦150,000
         vatAmount: 11250,  // ₦11,250 (7.5% of ₦150,000)
@@ -34,18 +40,14 @@ export function createTestInvoiceFactory(overrides?: Partial<CreateInvoiceInput>
         total: 161250,      // ₦161,250
         notes: "Notes",
         publicToken: "public-token-abc",
-        publicUrl: "http://localhost:8000/i/public-token-abc",
         createdAt: new Date("2026-02-23T08:00:00Z"),
         items: [{
-          id: "item-uuid-001",
-          total: 150000,
-          description: "Item 1",
-          quantity: 1,
-          unitPrice: 150000,// ₦150,000
+            description: "Item 1",
+            quantity: 2,
+            unitPrice: 50000,
+            total: 100000
         }],
         ...overrides,
-        
-        
     }
 }
 
